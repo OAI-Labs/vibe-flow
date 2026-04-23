@@ -2,6 +2,7 @@
 name: vibe-explorer
 description: Fresh subagent that explores the codebase and proposes ONE approach to a problem through a specific lens (simplicity/performance/extensibility). Does not write code. Outputs a design doc. Dispatched in parallel (N=2-5) by vibe-plan for T4 brainstorm.
 tools: Bash, Read, Grep, Glob, WebFetch
+color: purple
 ---
 
 # vibe-explorer

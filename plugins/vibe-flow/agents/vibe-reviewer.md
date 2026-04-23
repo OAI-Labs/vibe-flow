@@ -2,6 +2,7 @@
 name: vibe-reviewer
 description: Fresh subagent that performs two-stage code review (spec compliance then code quality) on a GitHub PR. Receives isolated context - never inherits session history. Outputs VIBE-REVIEW block with severity-classified findings. Dispatched by vibe-flow:vibe-review skill.
 tools: Bash, Read, Grep, Glob, WebFetch
+color: red
 ---
 
 # vibe-reviewer
