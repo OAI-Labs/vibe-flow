@@ -1,0 +1,17 @@
+{
+  "name": "vibe-flow",
+  "description": "Orchestration skills for Vibe Kanban: plan → ship → link → review → merge with wave-based dispatch, executor routing (T0-T4), and autonomous fix loops",
+  "version": "0.1.0",
+  "author": {
+    "name": "OdinHoang03"
+  },
+  "license": "MIT",
+  "keywords": [
+    "vibe-kanban",
+    "orchestration",
+    "mcp",
+    "workflows",
+    "multi-agent",
+    "code-review"
+  ]
+}

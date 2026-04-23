@@ -1,0 +1,60 @@
+# Copy this to <repo-root>/.vibe-flow.yaml and edit.
+# All fields are optional; defaults shown.
+
+# Vibe Kanban project this repo ships into.
+# Required. Get from: mcp__vibe-kanban__list_projects
+project_id: ""
+
+# Default executor + variant when tier routing picks CLAUDE_CODE tier.
+default_executor: CLAUDE_CODE
+default_variant: sonnet-4.6-high
+
+# Brainstorm mode for T4 (research/ambiguous) issues.
+brainstorm:
+  default: autonomous          # autonomous | interactive
+  explorers: 3                 # 2-5 parallel explorers for autonomous
+
+# Wave barrier semantics.
+# merge    = wait for all issues in wave to merge before advancing (safe, slower)
+# pr-open  = wait only for PRs to be open (fast, riskier conflicts)
+wave_barrier: merge
+
+# Concurrency: max parallel workspaces dispatched simultaneously.
+max_parallel: 5
+
+# Cost controls.
+max_opus_per_wave: 2
+cost_budget_usd: 50
+
+# Fallback chain when an executor fails (high → low).
+fallback_chain:
+  - opus-4.6
+  - sonnet-4.6-high
+  - sonnet-4.6-medium
+
+# Archive policy.
+archive:
+  delete_branch_after_days: 7
+  keep_workspace_after_merge_days: 30
+
+# Timeouts.
+workspace_timeout_minutes: 60
+skip_ci_wait: false
+skip_rebase_review: false
+
+# Strategy.
+rebase_strategy: rebase        # rebase | merge-commit
+review_before_ci: false        # true = review before CI green (faster feedback)
+
+# Per-issue tier overrides (manual).
+tier_overrides:
+  # "ISSUE-42": T3
+  # "ISSUE-17": T0
+
+# Notifications.
+notify:
+  slack: ""                    # webhook URL
+  discord: ""                  # webhook URL
+
+# Safety: hotfix bypass requires this many human approvals in issue comments.
+hotfix_required_approvals: 2
