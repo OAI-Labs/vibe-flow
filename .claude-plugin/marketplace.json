@@ -1,0 +1,29 @@
+{
+  "name": "vibe-flow",
+  "owner": {
+    "name": "OAI-Labs"
+  },
+  "metadata": {
+    "description": "Vibe Kanban orchestration plugins: plan → ship → review → merge with wave-based dispatch and tier routing",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "vibe-flow",
+      "source": ".",
+      "description": "Orchestration skills for Vibe Kanban: plan, ship, link, review, merge, dispatch-fix, rebase, status, standup, flow",
+      "version": "0.1.0",
+      "author": {
+        "name": "OAI-Labs"
+      },
+      "license": "MIT",
+      "keywords": [
+        "vibe-kanban",
+        "orchestration",
+        "mcp",
+        "multi-agent",
+        "code-review"
+      ]
+    }
+  ]
+}
