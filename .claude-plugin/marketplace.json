@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "vibe-flow",
-      "source": ".",
+      "source": "./plugins/vibe-flow",
       "description": "Orchestration skills for Vibe Kanban: plan, ship, link, review, merge, dispatch-fix, rebase, status, standup, flow",
       "version": "0.1.0",
       "author": {
