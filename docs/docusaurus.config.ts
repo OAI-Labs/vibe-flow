@@ -82,6 +82,7 @@ const config: Config = {
               label: 'License (MIT)',
               href: 'https://github.com/OAI-Labs/vibe-flow/blob/main/LICENSE',
             },
+            { label: 'Privacy Policy', to: '/privacy' },
           ],
         },
       ],
