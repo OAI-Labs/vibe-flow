@@ -1,0 +1,453 @@
+/* =========================================================================
+   Landing page — editorial-industrial layout
+   ========================================================================= */
+
+.page {
+  --vf-max: 72rem;
+  --vf-gutter: clamp(1.25rem, 4vw, 3rem);
+  background: var(--vf-bg);
+  color: var(--vf-ink);
+  min-height: 100vh;
+}
+
+/* =============================== Hero ================================== */
+.hero {
+  position: relative;
+  padding: clamp(4rem, 10vh, 9rem) var(--vf-gutter) clamp(3rem, 8vh, 6rem);
+  border-bottom: 1px solid var(--vf-rule);
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(232, 93, 26, 0.08), transparent 50%),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 32px,
+      rgba(242, 237, 228, 0.015) 32px,
+      rgba(242, 237, 228, 0.015) 33px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
+  max-width: var(--vf-max);
+  margin: 0 auto;
+}
+
+.heroEyebrow {
+  font-family: var(--vf-font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vf-ink-meta);
+  margin: 0 0 2rem;
+  display: flex;
+  gap: 0.8rem;
+  align-items: baseline;
+  opacity: 0;
+  animation: rise 0.7s 0.1s both ease-out;
+}
+
+.heroEyebrowNum {
+  color: var(--vf-accent);
+  font-weight: 500;
+}
+
+.heroTitle {
+  font-family: var(--vf-font-display);
+  font-weight: 300;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  margin: 0 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+.heroTitleMain {
+  font-size: clamp(4.5rem, 12vw, 10rem);
+  font-weight: 400;
+  font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 1;
+  opacity: 0;
+  animation: rise 0.9s 0.2s both ease-out;
+}
+
+.heroTitleSub {
+  font-size: clamp(1.75rem, 4vw, 3.25rem);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--vf-ink-muted);
+  font-variation-settings: 'opsz' 72, 'SOFT' 70;
+  opacity: 0;
+  animation: rise 0.9s 0.35s both ease-out;
+}
+
+.heroTitleSub em {
+  font-style: italic;
+  color: var(--vf-ink);
+  font-weight: 400;
+}
+
+.heroTagline {
+  font-family: var(--vf-font-body);
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  max-width: 42ch;
+  color: var(--vf-ink-muted);
+  margin: 0 0 2.5rem;
+  line-height: 1.55;
+  opacity: 0;
+  animation: rise 0.9s 0.5s both ease-out;
+}
+
+.heroCta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: rise 0.9s 0.65s both ease-out;
+}
+
+.ctaPrimary,
+.ctaSecondary {
+  font-family: var(--vf-font-mono);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 0.85rem 1.6rem;
+  text-decoration: none;
+  border: 1px solid;
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.ctaPrimary {
+  background: var(--vf-accent);
+  border-color: var(--vf-accent);
+  color: #0a0a0a;
+}
+
+.ctaPrimary:hover {
+  text-decoration: none;
+  color: #0a0a0a;
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--vf-ink);
+}
+
+.ctaSecondary {
+  background: transparent;
+  border-color: var(--vf-rule-strong);
+  color: var(--vf-ink);
+}
+
+.ctaSecondary:hover {
+  text-decoration: none;
+  color: var(--vf-ink);
+  border-color: var(--vf-ink);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--vf-accent);
+}
+
+/* ========================= Phase diagram =============================== */
+.phase {
+  margin-top: clamp(3rem, 6vh, 5rem);
+  padding-top: 2rem;
+  border-top: 1px dashed var(--vf-rule);
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(0.75rem, 2vw, 1.75rem);
+  align-items: baseline;
+  font-family: var(--vf-font-mono);
+  font-size: 0.85rem;
+}
+
+.phaseItem {
+  display: inline-flex;
+  gap: 0.6rem;
+  align-items: baseline;
+  opacity: 0;
+  animation: rise 0.7s both ease-out;
+}
+
+.phaseNum {
+  color: var(--vf-accent);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+
+.phaseName {
+  color: var(--vf-ink);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+
+.phaseArrow {
+  color: var(--vf-ink-meta);
+  padding-left: clamp(0.25rem, 1vw, 0.75rem);
+}
+
+/* =============================== Sections ============================== */
+.section {
+  max-width: var(--vf-max);
+  margin: 0 auto;
+  padding: clamp(4rem, 8vh, 6rem) var(--vf-gutter) clamp(2rem, 4vh, 3rem);
+}
+
+.sectionHead {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.5rem 2.5rem;
+  margin-bottom: 2rem;
+  align-items: baseline;
+}
+
+.sectionNum {
+  font-family: var(--vf-font-mono);
+  font-size: 0.9rem;
+  color: var(--vf-accent);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  padding-top: 0.5rem;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-family: var(--vf-font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-variation-settings: 'opsz' 120, 'SOFT' 30;
+}
+
+.sectionLede {
+  grid-column: 2;
+  font-family: var(--vf-font-body);
+  font-size: 1.05rem;
+  color: var(--vf-ink-muted);
+  max-width: 50ch;
+  margin: 0;
+  line-height: 1.55;
+}
+
+.sectionBody {
+  margin-top: 2.5rem;
+}
+
+.prose {
+  font-family: var(--vf-font-body);
+  font-size: 1.05rem;
+  line-height: 1.75;
+  max-width: 62ch;
+  color: var(--vf-ink);
+  margin: 0 0 1.25rem;
+}
+
+/* =========================== Skills grid =============================== */
+.skillGrid {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--vf-rule);
+}
+
+.skillRow {
+  display: grid;
+  grid-template-columns: minmax(12rem, 16rem) 1fr auto;
+  gap: 2rem;
+  padding: 1.15rem 0.25rem;
+  border-bottom: 1px solid var(--vf-rule);
+  text-decoration: none;
+  color: var(--vf-ink);
+  transition: background 0.15s ease, padding 0.15s ease;
+  align-items: baseline;
+}
+
+.skillRow:hover {
+  text-decoration: none;
+  color: var(--vf-ink);
+  background: var(--vf-accent-soft);
+  padding-left: 1rem;
+}
+
+.skillName {
+  font-family: var(--vf-font-mono);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--vf-accent);
+}
+
+.skillDesc {
+  font-family: var(--vf-font-body);
+  font-size: 0.98rem;
+  color: var(--vf-ink-muted);
+}
+
+.skillArrow {
+  font-family: var(--vf-font-mono);
+  color: var(--vf-ink-meta);
+  font-size: 0.9rem;
+}
+
+.skillRow:hover .skillArrow {
+  color: var(--vf-accent);
+}
+
+@media (max-width: 640px) {
+  .skillRow {
+    grid-template-columns: 1fr auto;
+    gap: 0.4rem 1rem;
+  }
+  .skillDesc {
+    grid-column: 1 / -1;
+  }
+}
+
+/* =========================== Tier table ================================ */
+.tierTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--vf-font-body);
+}
+
+.tierTable th,
+.tierTable td {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--vf-rule);
+  font-size: 0.95rem;
+}
+
+.tierTable th {
+  font-family: var(--vf-font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vf-ink-meta);
+  border-bottom: 1px solid var(--vf-rule-strong);
+  padding-top: 0.4rem;
+}
+
+.tierCell {
+  font-family: var(--vf-font-mono);
+  color: var(--vf-accent);
+  font-weight: 500;
+}
+
+/* ============================= Install ================================= */
+.install {
+  max-width: 56rem;
+}
+
+.installPre {
+  background: var(--vf-bg-raised);
+  border: 1px solid var(--vf-rule);
+  border-left: 2px solid var(--vf-accent);
+  padding: 1.5rem 1.75rem;
+  margin: 0 0 1.25rem;
+  font-family: var(--vf-font-mono);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  color: var(--vf-ink);
+}
+
+.installPre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+}
+
+.installNote {
+  font-family: var(--vf-font-body);
+  font-size: 0.95rem;
+  color: var(--vf-ink-muted);
+}
+
+/* ============================= Philosophy ============================== */
+.phil {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--vf-rule);
+}
+
+.philItem {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--vf-rule);
+  display: grid;
+  grid-template-columns: minmax(14rem, 20rem) 1fr;
+  gap: 2.5rem;
+  align-items: baseline;
+}
+
+.philHead {
+  font-family: var(--vf-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.25rem;
+  color: var(--vf-ink);
+  font-variation-settings: 'opsz' 72, 'SOFT' 50;
+}
+
+.philBody {
+  font-family: var(--vf-font-body);
+  color: var(--vf-ink-muted);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .philItem {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+}
+
+/* ============================== Endmark ================================ */
+.endmark {
+  max-width: var(--vf-max);
+  margin: 0 auto;
+  padding: 4rem var(--vf-gutter) 6rem;
+  text-align: center;
+  font-family: var(--vf-font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  color: var(--vf-ink-meta);
+  text-transform: uppercase;
+}
+
+/* ============================= Animations ============================== */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroEyebrow,
+  .heroTitleMain,
+  .heroTitleSub,
+  .heroTagline,
+  .heroCta,
+  .phaseItem {
+    animation: none;
+    opacity: 1;
+  }
+}

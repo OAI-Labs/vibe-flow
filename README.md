@@ -2,13 +2,29 @@
 
 Orchestration skills for Vibe Kanban. Turn a spec into merged code using multi-agent waves: **plan → ship → link → review → merge**, with autonomous fix loops.
 
+**Docs:** https://oai-labs.github.io/vibe-flow/
+
 ## Install
 
+In Claude Code:
+
 ```bash
-claude --plugin-dir ./vibe-flow
+/plugin marketplace add OAI-Labs/vibe-flow
+/plugin install vibe-flow@vibe-flow
 ```
 
-Or install globally by symlinking into `~/.claude/plugins/`.
+Then in your repo:
+
+```bash
+/vibe-flow:vibe-init
+```
+
+Dev install (clone + symlink):
+
+```bash
+git clone https://github.com/OAI-Labs/vibe-flow.git
+ln -s "$(pwd)/vibe-flow/plugins/vibe-flow" ~/.claude/plugins/vibe-flow
+```
 
 Requires the `vibe-kanban` MCP server configured (see [MCP setup](#mcp-setup)).
 

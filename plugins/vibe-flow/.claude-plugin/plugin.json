@@ -2,8 +2,11 @@
   "name": "vibe-flow",
   "description": "Orchestration skills for Vibe Kanban: plan → ship → link → review → merge with wave-based dispatch, executor routing (T0-T4), and autonomous fix loops",
   "version": "0.2.0",
+  "homepage": "https://oai-labs.github.io/vibe-flow/",
+  "repository": "https://github.com/OAI-Labs/vibe-flow",
   "author": {
-    "name": "OdinHoang03"
+    "name": "OAI-Labs",
+    "url": "https://github.com/OAI-Labs"
   },
   "license": "MIT",
   "keywords": [

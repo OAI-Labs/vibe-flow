@@ -1,0 +1,132 @@
+/* =========================================================================
+   vibe-flow — editorial-industrial theme
+   Dark palette. Fraunces display serif + IBM Plex Sans body + Plex Mono code.
+   ========================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap');
+
+:root {
+  /* Editorial-industrial palette */
+  --vf-bg: #0a0a0a;
+  --vf-bg-raised: #14130f;
+  --vf-bg-inset: #1a1916;
+  --vf-ink: #f2ede4;
+  --vf-ink-muted: #b8b3a7;
+  --vf-ink-meta: #8a867e;
+  --vf-accent: #e85d1a;
+  --vf-accent-soft: rgba(232, 93, 26, 0.12);
+  --vf-rule: #2a2a26;
+  --vf-rule-strong: #3a3a34;
+
+  /* Fonts */
+  --vf-font-display: 'Fraunces', 'Times New Roman', serif;
+  --vf-font-body: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  --vf-font-mono: 'IBM Plex Mono', 'SF Mono', 'Menlo', monospace;
+
+  /* Map Docusaurus tokens → our palette */
+  --ifm-color-primary: var(--vf-accent);
+  --ifm-color-primary-dark: #d14f13;
+  --ifm-color-primary-darker: #b8450f;
+  --ifm-color-primary-darkest: #953809;
+  --ifm-color-primary-light: #eb6a2b;
+  --ifm-color-primary-lighter: #ee7a44;
+  --ifm-color-primary-lightest: #f39061;
+
+  --ifm-font-family-base: var(--vf-font-body);
+  --ifm-font-family-monospace: var(--vf-font-mono);
+  --ifm-heading-font-family: var(--vf-font-display);
+  --ifm-heading-font-weight: 600;
+
+  --ifm-code-font-size: 90%;
+  --ifm-code-background: var(--vf-bg-inset);
+  --ifm-code-border-radius: 2px;
+  --docusaurus-highlighted-code-line-bg: rgba(232, 93, 26, 0.12);
+
+  --ifm-global-radius: 2px;
+  --ifm-button-border-radius: 2px;
+}
+
+/* ============================= Dark mode =============================== */
+[data-theme='dark'] {
+  --ifm-background-color: var(--vf-bg);
+  --ifm-background-surface-color: var(--vf-bg-raised);
+  --ifm-color-content: var(--vf-ink);
+  --ifm-color-content-secondary: var(--vf-ink-muted);
+  --ifm-navbar-background-color: rgba(10, 10, 10, 0.85);
+  --ifm-footer-background-color: #070706;
+  --ifm-toc-border-color: var(--vf-rule);
+  --ifm-hr-background-color: var(--vf-rule);
+  --ifm-link-color: var(--vf-ink);
+  --ifm-link-hover-color: var(--vf-accent);
+  --ifm-menu-color: var(--vf-ink-muted);
+  --ifm-menu-color-active: var(--vf-accent);
+  --ifm-breadcrumb-item-background-active: var(--vf-accent-soft);
+}
+
+/* ============================= Light mode ============================== */
+[data-theme='light'] {
+  --ifm-background-color: #f2ede4;
+  --ifm-color-content: #0a0a0a;
+  --ifm-color-content-secondary: #4a4840;
+  --ifm-navbar-background-color: rgba(242, 237, 228, 0.9);
+  --ifm-toc-border-color: #d4ceC0;
+  --ifm-link-color: #0a0a0a;
+  --ifm-link-hover-color: var(--vf-accent);
+}
+
+/* ============================ Base tweaks ============================== */
+html {
+  font-feature-settings: 'ss01', 'ss02', 'kern';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--vf-font-body);
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--vf-font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 144, 'SOFT' 30;
+}
+
+h1 { font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.02; }
+h2 { font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.1; margin-top: 3rem; }
+
+code {
+  font-family: var(--vf-font-mono);
+  font-weight: 400;
+  font-size: 0.9em;
+  padding: 0.15em 0.35em;
+  border: 1px solid var(--vf-rule);
+  background: var(--vf-bg-inset);
+}
+
+.navbar {
+  border-bottom: 1px solid var(--vf-rule);
+  backdrop-filter: blur(12px);
+}
+
+.navbar__title {
+  font-family: var(--vf-font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-size: 1.1rem;
+}
+
+.footer {
+  border-top: 1px solid var(--vf-rule);
+}
+
+/* Section rule used across landing */
+.vf-rule {
+  height: 1px;
+  background: var(--vf-rule);
+  border: none;
+  margin: 0;
+}
