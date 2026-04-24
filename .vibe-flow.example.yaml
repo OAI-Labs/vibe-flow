@@ -58,3 +58,13 @@ notify:
 
 # Safety: hotfix bypass requires this many human approvals in issue comments.
 hotfix_required_approvals: 2
+
+# Map vibe-flow roles → actual vibe-kanban board column names for THIS project.
+# vibe-kanban columns are configurable per project, so names vary.
+# Leave a key unset (or commented out) if your board doesn't have that column;
+# vibe-flow will fall back to the closest safe behavior (e.g. stay in_review on approve).
+statuses:
+  # in_progress:    "in_progress"       # while agent is working / fixing
+  # in_review:      "in_review"         # after PR opens, waiting on review
+  # ready_to_merge: "ready_to_merge"    # optional: after review APPROVED
+  # done:           "done"              # after merge

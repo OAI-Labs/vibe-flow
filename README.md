@@ -16,6 +16,7 @@ Requires the `vibe-kanban` MCP server configured (see [MCP setup](#mcp-setup)).
 
 | Skill | Purpose |
 |---|---|
+| `/vibe-flow:vibe-init` | First-time setup: pick project, write `.vibe-flow.yaml`, scaffold state dir |
 | `/vibe-flow:vibe-plan` | Brainstorm a spec → create issue tree (epic + sub-issues + deps) in a project |
 | `/vibe-flow:vibe-ship` | Wave-based parallel dispatch with executor routing (T0 flash → T4 opus) |
 | `/vibe-flow:vibe-link` | Link GitHub PRs to workspace branches, auto-open PR if missing |
@@ -29,7 +30,7 @@ Requires the `vibe-kanban` MCP server configured (see [MCP setup](#mcp-setup)).
 
 ## Per-project config
 
-Create `.vibe-flow.yaml` at repo root:
+Run `/vibe-flow:vibe-init` for guided setup, or create `.vibe-flow.yaml` manually at repo root:
 
 ```yaml
 project_id: 42d306d0-66a2-4655-9e2b-8c9819f52b94
@@ -54,7 +55,17 @@ archive:
 notify:
   slack: ""
   discord: ""
+
+# Map vibe-flow roles → actual board column names. Only set keys whose columns exist.
+# statuses:
+#   ready_to_merge: "ready_to_merge"
 ```
+
+### Board columns
+
+vibe-flow assumes standard columns `in_progress` / `in_review` / `done` on your board. Status transitions (on PR open → `in_review`, on rejected review → back to `in_progress`, on merge → `done`) use `update_issue` with the column names as configured in `statuses.*`.
+
+**Optional `ready_to_merge` column:** vibe-kanban MCP does not expose a way to create columns — if you want an approved-but-not-merged column, add it manually in vibe-kanban UI → Project Settings → Statuses, then set its name in `.vibe-flow.yaml` under `statuses.ready_to_merge`. Without it, approved issues stay in `in_review` until merge.
 
 ## Complexity tiers
 

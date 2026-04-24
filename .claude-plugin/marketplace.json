@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Vibe Kanban orchestration plugins: plan → ship → review → merge with wave-based dispatch and tier routing",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "plugins": [
     {
       "name": "vibe-flow",
       "source": "./plugins/vibe-flow",
       "description": "Orchestration skills for Vibe Kanban: plan, ship, link, review, merge, dispatch-fix, rebase, status, standup, flow",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "author": {
         "name": "OAI-Labs"
       },

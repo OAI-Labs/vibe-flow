@@ -106,16 +106,23 @@ Critical: <count> | Important: <count> | Minor: <count>
 Full review: <PR_URL>#pullrequestreview-<ID>
 ```
 
-### Step 6: Update state.json and signal next
+### Step 6: Update state.json, transition board, signal next
 
-Based on rating:
-| Rating | state.json status | Next action |
-|---|---|---|
-| approve | `approved` | `vibe-merge` |
-| approve-with-minor | `approved` | `vibe-merge` (minor items → follow-up issue, optional) |
-| request-changes | `review_critical` | `vibe-dispatch-fix` |
-| reject | `review_critical` | `vibe-dispatch-fix` (escalate tier) |
-| spec fail | `review_critical` | `vibe-dispatch-fix` (with spec gap summary) |
+Based on rating, update BOTH `state.json` AND the vibe-kanban board status (via `update_issue`):
+
+| Rating | state.json status | Board status | Next action |
+|---|---|---|---|
+| approve | `approved` | `ready_to_merge` if configured, else stay `in_review` | `vibe-merge` |
+| approve-with-minor | `approved` | `ready_to_merge` if configured, else stay `in_review` | `vibe-merge` (minor items → follow-up issue, optional) |
+| request-changes | `review_critical` | back to `in_progress` | `vibe-dispatch-fix` |
+| reject | `review_critical` | back to `in_progress` | `vibe-dispatch-fix` (escalate tier) |
+| spec fail | `review_critical` | back to `in_progress` | `vibe-dispatch-fix` (with spec gap summary) |
+
+> vibe-kanban does not ship `ready_to_merge` out of the box, but projects can add custom columns. Read `.vibe-flow.yaml` → `statuses.ready_to_merge`:
+> - If set → transition to that status on approve.
+> - If unset → leave the issue in `in_review`; the signal for `vibe-merge` is `state.json.status = approved` + GitHub review APPROVED.
+>
+> Same for `statuses.in_progress` / `statuses.in_review` — never hardcode names, always resolve through config (or `list_issues` as last resort).
 
 ## Reviewer discipline (for the subagent)
 
@@ -177,3 +184,5 @@ Review posted for PR #<N>:
 - Classify every finding
 - Post review to GitHub via `gh`, not just in chat
 - Update issue + state.json after review
+- On approve: move to `ready_to_merge` if the project configured that column (`.vibe-flow.yaml → statuses.ready_to_merge`), else stay `in_review`. On request-changes: back to `in_progress`.
+- Resolve all status names through `.vibe-flow.yaml → statuses.*`, never hardcode.

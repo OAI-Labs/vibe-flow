@@ -93,14 +93,17 @@ Capture the PR URL from output.
 
 **A. Update vibe-kanban issue:**
 
-Add comment via MCP (note: check current MCP tools; if no `create_comment`, embed in issue description):
-```
-[vibe-flow] PR opened: <PR_URL>
-Branch: <BRANCH_NAME>
-Commit: <SHA>
-```
+Call `update_issue` to do BOTH:
 
-Use `update_issue` to append PR URL to description if no comment API.
+1. **Transition status → `in_review`.** Resolve the exact status name from `.vibe-flow.yaml → statuses.in_review` (vibe-kanban columns are project-configurable). If the key is unset, fall back to `list_issues` to discover the enum, or leave status untouched and log a warning — never hardcode a name.
+2. **Append PR URL** to description / comment:
+   ```
+   [vibe-flow] PR opened: <PR_URL>
+   Branch: <BRANCH_NAME>
+   Commit: <SHA>
+   ```
+
+The board must reflect that work is out of `in_progress` and waiting on a reviewer. If MCP offers no comment API, fold the PR URL block into the description via the same `update_issue` call.
 
 **B. Update PR body with back-link:**
 
@@ -225,6 +228,8 @@ PR linked for issue <SIMPLE_ID>:
 ## Remember
 
 - One workspace = one PR; avoid duplicates
+- Board status must move to `in_review` when PR opens — don't leave it stale in `in_progress`
+- Confirm the project's actual status names before hardcoding (`list_issues`)
 - Update state.json after every operation
 - Don't wait for CI if `skip_ci_wait: true`
 - Cross-link on multi-repo
