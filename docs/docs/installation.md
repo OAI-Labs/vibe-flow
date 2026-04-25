@@ -46,7 +46,7 @@ For a self-hosted instance, point the MCP binary at your backend with `VIBE_BACK
   "mcpServers": {
     "vibe_kanban": {
       "command": "npx",
-      "args": ["-y", "vibe-kanban@latest", "--mcp"],
+      "args": ["-y", "vibe-kanban@latest", "mcp"],
       "env": {
         "VIBE_BACKEND_URL": "http://your-server:PORT"
       }

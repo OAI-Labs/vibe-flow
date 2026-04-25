@@ -116,7 +116,7 @@ For a self-hosted instance, add `VIBE_BACKEND_URL`:
 "mcpServers": {
   "vibe_kanban": {
     "command": "npx",
-    "args": ["-y", "vibe-kanban@latest", "--mcp"],
+    "args": ["-y", "vibe-kanban@latest", "mcp"],
     "env": {
       "VIBE_BACKEND_URL": "http://your-server:PORT"
     }
