@@ -90,17 +90,17 @@ git pull origin main
 **4b. For each issue in wave (parallel):**
 1. Compute tier via `executor-routing.md`
 2. Honor `max_opus_per_wave` — downgrade lowest-criticality opus issues to sonnet-high
-3. Compute branch name `vk/<simple-id>-<slug>`
-4. Build prompt: `{issue_description}` + closing-protocol template with `{{BRANCH_NAME}}` filled in
-5. Call MCP `start_workspace`:
+3. Build prompt: `{issue_description}` + closing-protocol template
+4. Call MCP `start_workspace`:
    ```
    executor = tier.executor
    variant = tier.variant
-   name = branch_name
-   repositories = [{repo_id, branch: branch_name}]
+   name = "<simple-id> <slug>"
+   repositories = [{repo_id, branch: "main"}]
    issue_id = issue.id
    prompt = built_prompt
    ```
+5. Read actual feature branch from workspace response → record in state.json with workspace_id
 6. Record in state.json: `status: dispatched`
 
 **Dispatch in parallel** — issue calls in a single message with multiple tool invocations.

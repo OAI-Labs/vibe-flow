@@ -50,8 +50,8 @@ For each issue in wave L:
 1. Triage tier (executor-routing.md algorithm)
 2. Allocate executor/variant honoring max_opus_per_wave
 3. git pull origin main (at wave start — shared for all issues in wave)
-4. For each issue: create branch vk/<id>-<slug>
-5. start_workspace(executor, variant, branch, issue_id, prompt+closing-protocol)
+4. start_workspace(executor, variant, branch="main", name="<issue-id> <slug>", issue_id, prompt+closing-protocol)
+5. Read actual feature branch from workspace response → save to state.json
 6. Record dispatch in state.json
 ```
 
