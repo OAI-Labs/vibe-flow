@@ -97,36 +97,37 @@ See `references/executor-routing.md`.
 
 ## MCP setup
 
-Requires `vibe-kanban` MCP server. Example wrapper for remote vibe-kanban via SSH tunnel:
+Requires the [vibe-kanban](https://github.com/BloopAI/vibe-kanban) MCP server.
 
-```bash
-#!/bin/bash
-# ~/.claude/vibe-kanban-mcp.sh
-TUNNEL_PORT=9998
-SSH_HOST="aws-t3.large"
-REMOTE_PORT=9999
-MCP_BIN="/c/Users/admin/.vibe-kanban/bin/v0.1.43-.../windows-x64/vibe-kanban-mcp.exe"
-PORT_FILE="/c/Users/admin/AppData/Local/Temp/vibe-kanban/vibe-kanban.port"
-
-if ! netstat -an 2>/dev/null | grep -q "127.0.0.1:${TUNNEL_PORT}.*LISTEN"; then
-  ssh -L "${TUNNEL_PORT}:127.0.0.1:${REMOTE_PORT}" "$SSH_HOST" -N -f \
-    -o StrictHostKeyChecking=no -o ExitOnForwardFailure=yes
-fi
-
-mkdir -p "$(dirname "$PORT_FILE")"
-echo "{\"main_port\":${TUNNEL_PORT},\"preview_proxy_port\":$((TUNNEL_PORT+1))}" > "$PORT_FILE"
-exec "$MCP_BIN" "$@"
-```
-
-Register in `~/.claude.json`:
+Add to `~/.claude.json` (global) or `.claude/settings.json` (project):
 
 ```json
-"vibe-kanban": {
-  "type": "stdio",
-  "command": "C:\\Program Files\\Git\\bin\\bash.exe",
-  "args": ["C:/Users/admin/.claude/vibe-kanban-mcp.sh"],
-  "env": {}
+"mcpServers": {
+  "vibe_kanban": {
+    "command": "npx",
+    "args": ["-y", "vibe-kanban@latest", "--mcp"]
+  }
 }
+```
+
+For a self-hosted instance, add `VIBE_BACKEND_URL`:
+
+```json
+"mcpServers": {
+  "vibe_kanban": {
+    "command": "npx",
+    "args": ["-y", "vibe-kanban@latest", "--mcp"],
+    "env": {
+      "VIBE_BACKEND_URL": "http://your-server:PORT"
+    }
+  }
+}
+```
+
+Verify the server is connected:
+
+```bash
+/mcp
 ```
 
 ## State

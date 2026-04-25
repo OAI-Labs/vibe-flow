@@ -24,44 +24,38 @@ ln -s "$(pwd)/vibe-flow/plugins/vibe-flow" ~/.claude/plugins/vibe-flow
 
 ## 2. Wire up the vibe-kanban MCP server
 
-vibe-flow depends on the `vibe-kanban` MCP. If your vibe-kanban runs on a
-remote host, a tunnel wrapper looks like:
+vibe-flow depends on the [vibe-kanban](https://github.com/BloopAI/vibe-kanban) MCP server.
 
-```bash
-#!/bin/bash
-# ~/.claude/vibe-kanban-mcp.sh
-TUNNEL_PORT=9998
-SSH_HOST="aws-t3.large"
-REMOTE_PORT=9999
-MCP_BIN="/path/to/vibe-kanban-mcp"
-PORT_FILE="$HOME/.tmp/vibe-kanban/vibe-kanban.port"
-
-if ! netstat -an 2>/dev/null | grep -q "127.0.0.1:${TUNNEL_PORT}.*LISTEN"; then
-  ssh -L "${TUNNEL_PORT}:127.0.0.1:${REMOTE_PORT}" "$SSH_HOST" -N -f \
-    -o StrictHostKeyChecking=no -o ExitOnForwardFailure=yes
-fi
-
-mkdir -p "$(dirname "$PORT_FILE")"
-echo "{\"main_port\":${TUNNEL_PORT},\"preview_proxy_port\":$((TUNNEL_PORT+1))}" > "$PORT_FILE"
-exec "$MCP_BIN" "$@"
-```
-
-Register in `~/.claude.json`:
+Add to `~/.claude.json` (global) or `.claude/settings.json` (project):
 
 ```json
 {
   "mcpServers": {
-    "vibe-kanban": {
-      "type": "stdio",
-      "command": "bash",
-      "args": ["~/.claude/vibe-kanban-mcp.sh"]
+    "vibe_kanban": {
+      "command": "npx",
+      "args": ["-y", "vibe-kanban@latest", "--mcp"]
     }
   }
 }
 ```
 
-Verify: in Claude Code, run a trivial MCP call (e.g. `list_organizations`) to
-confirm the server is reachable.
+For a self-hosted instance, point the MCP binary at your backend with `VIBE_BACKEND_URL`:
+
+```json
+{
+  "mcpServers": {
+    "vibe_kanban": {
+      "command": "npx",
+      "args": ["-y", "vibe-kanban@latest", "--mcp"],
+      "env": {
+        "VIBE_BACKEND_URL": "http://your-server:PORT"
+      }
+    }
+  }
+}
+```
+
+Verify: run `/mcp` in Claude Code and confirm `vibe_kanban` shows as connected.
 
 ## 3. Run `vibe-init` in your repo
 
