@@ -1,13 +1,23 @@
-# vibe-flow
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-dark.svg">
+    <img src="docs/assets/logo-light.svg" alt="vibe-flow" width="420">
+  </picture>
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/github/v/tag/OAI-Labs/vibe-flow?label=version&sort=semver)](https://github.com/OAI-Labs/vibe-flow/releases)
-[![Docs](https://img.shields.io/badge/docs-online-blue)](https://oai-labs.github.io/vibe-flow/)
-[![Deploy docs](https://github.com/OAI-Labs/vibe-flow/actions/workflows/deploy-docs.yml/badge.svg)](https://github.com/OAI-Labs/vibe-flow/actions/workflows/deploy-docs.yml)
+<p align="center">
+  Orchestration skills for Vibe Kanban. Turn a spec into merged code using multi-agent waves:<br>
+  <strong>plan → ship → link → review → merge</strong>, with autonomous fix loops.
+</p>
 
-Orchestration skills for Vibe Kanban. Turn a spec into merged code using multi-agent waves: **plan → ship → link → review → merge**, with autonomous fix loops.
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+  <a href="https://github.com/OAI-Labs/vibe-flow/releases"><img src="https://img.shields.io/github/v/tag/OAI-Labs/vibe-flow?label=version&sort=semver" alt="Version"></a>
+  <a href="https://oai-labs.github.io/vibe-flow/"><img src="https://img.shields.io/badge/docs-online-blue" alt="Docs"></a>
+  <a href="https://github.com/OAI-Labs/vibe-flow/actions/workflows/deploy-docs.yml"><img src="https://github.com/OAI-Labs/vibe-flow/actions/workflows/deploy-docs.yml/badge.svg" alt="Deploy docs"></a>
+</p>
 
-**Docs:** https://oai-labs.github.io/vibe-flow/ · **Contributing:** [CONTRIBUTING.md](CONTRIBUTING.md) · **Security:** [SECURITY.md](SECURITY.md)
+<p align="center"><strong>Docs:</strong> <a href="https://oai-labs.github.io/vibe-flow/">oai-labs.github.io/vibe-flow</a> · <strong>Contributing:</strong> <a href="CONTRIBUTING.md">CONTRIBUTING.md</a> · <strong>Security:</strong> <a href="SECURITY.md">SECURITY.md</a></p>
 
 ## Install
 
