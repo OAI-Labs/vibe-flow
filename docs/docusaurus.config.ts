@@ -61,7 +61,7 @@ const config: Config = {
     },
     navbar: {
       title: 'vibe-flow',
-      logo: { alt: 'vibe-flow', src: 'img/logo.svg' },
+      logo: { alt: 'vibe-flow', src: 'img/logo.svg', srcDark: 'img/logo-dark.svg' },
       items: [
         { to: '/docs/intro', label: 'Docs', position: 'right' },
         { to: '/docs/skills', label: 'Skills', position: 'right' },

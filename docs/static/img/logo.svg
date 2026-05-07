@@ -1,4 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32" width="40" height="32" fill="none" aria-hidden="true">
-  <path d="M3 8 L11 24 L19 8" stroke="#e85d1a" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter"/>
-  <path d="M24 24 L24 8 L35 8 M24 16 L32 16" stroke="#e85d1a" stroke-width="2.5" stroke-linecap="square"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32" width="40" height="32" role="img" aria-label="vibe-flow">
+  <g fill="#0a0a0a">
+    <rect x="3"  y="4"    width="22" height="5" rx="2.5"/>
+    <rect x="8"  y="13.5" width="22" height="5" rx="2.5"/>
+    <rect x="13" y="23"   width="22" height="5" rx="2.5"/>
+  </g>
 </svg>
