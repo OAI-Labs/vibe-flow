@@ -32,7 +32,7 @@ function Hero() {
       <div className={styles.heroInner}>
         <p className={styles.heroEyebrow}>
           <span className={styles.heroEyebrowNum}>00</span>
-          <span>— Plugin for Claude Code &middot; v0.2.1</span>
+          <span>— Plugin for Claude Code &middot; v{siteConfig.customFields?.pluginVersion as string}</span>
         </p>
         <h1 className={styles.heroTitle}>
           <span className={styles.heroTitleMain}>vibe-flow</span>

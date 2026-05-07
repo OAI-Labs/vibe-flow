@@ -1,11 +1,24 @@
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import { themes as prismThemes } from 'prism-react-renderer';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+const pluginManifest = JSON.parse(
+  readFileSync(
+    resolve(__dirname, '../plugins/vibe-flow/.claude-plugin/plugin.json'),
+    'utf-8',
+  ),
+) as { version: string };
 
 const config: Config = {
   title: 'vibe-flow',
   tagline: 'Spec to merged code. Multi-agent orchestration for Claude Code.',
   favicon: 'img/favicon.svg',
+
+  customFields: {
+    pluginVersion: pluginManifest.version,
+  },
 
   url: 'https://oai-labs.github.io',
   baseUrl: '/vibe-flow/',
