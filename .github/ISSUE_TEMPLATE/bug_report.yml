@@ -1,0 +1,88 @@
+name: Bug report
+description: Something is broken or behaving unexpectedly in vibe-flow.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug. The more specific you are,
+        the faster we can fix it. If this is a security issue, please follow
+        [SECURITY.md](../../SECURITY.md) instead.
+
+  - type: input
+    id: vibeflow-version
+    attributes:
+      label: vibe-flow version
+      description: From `plugins/vibe-flow/.claude-plugin/plugin.json` or the docs hero.
+      placeholder: "0.2.1"
+    validations:
+      required: true
+
+  - type: input
+    id: claude-code-version
+    attributes:
+      label: Claude Code version
+      description: Run `claude --version`.
+      placeholder: "1.2.3"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: skill
+    attributes:
+      label: Which skill is involved?
+      options:
+        - vibe-init
+        - vibe-plan
+        - vibe-ship
+        - vibe-link
+        - vibe-review
+        - vibe-merge
+        - vibe-dispatch-fix
+        - vibe-rebase
+        - vibe-status
+        - vibe-standup
+        - vibe-flow (meta)
+        - Not skill-specific / unsure
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Concise description of the actual behaviour.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Numbered steps. Include the exact slash command(s) you ran.
+      placeholder: |
+        1. /vibe-flow:vibe-review 42
+        2. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / output
+      description: Paste any relevant terminal output, error messages, or `state.json` snippets. Redact secrets.
+      render: shell
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Screenshots, links to PRs, related issues, etc.

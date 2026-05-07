@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://oai-labs.github.io/vibe-flow/
+    about: Skill reference, concepts, installation guide.
+  - name: Security report
+    url: https://github.com/OAI-Labs/vibe-flow/security/advisories/new
+    about: Found a vulnerability? Report privately, not as a public issue.

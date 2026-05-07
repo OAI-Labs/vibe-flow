@@ -1,8 +1,13 @@
 # vibe-flow
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Version](https://img.shields.io/github/v/tag/OAI-Labs/vibe-flow?label=version&sort=semver)](https://github.com/OAI-Labs/vibe-flow/releases)
+[![Docs](https://img.shields.io/badge/docs-online-blue)](https://oai-labs.github.io/vibe-flow/)
+[![Deploy docs](https://github.com/OAI-Labs/vibe-flow/actions/workflows/deploy-docs.yml/badge.svg)](https://github.com/OAI-Labs/vibe-flow/actions/workflows/deploy-docs.yml)
+
 Orchestration skills for Vibe Kanban. Turn a spec into merged code using multi-agent waves: **plan → ship → link → review → merge**, with autonomous fix loops.
 
-**Docs:** https://oai-labs.github.io/vibe-flow/
+**Docs:** https://oai-labs.github.io/vibe-flow/ · **Contributing:** [CONTRIBUTING.md](CONTRIBUTING.md) · **Security:** [SECURITY.md](SECURITY.md)
 
 ## Install
 
