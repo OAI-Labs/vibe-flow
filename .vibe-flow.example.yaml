@@ -46,6 +46,16 @@ skip_rebase_review: false
 rebase_strategy: rebase        # rebase | merge-commit
 review_before_ci: false        # true = review before CI green (faster feedback)
 
+# Review identity.
+# GitHub blocks `gh pr review --approve` / `--request-changes` when the auth
+# user is the PR author. To work around this, create a separate bot account
+# (e.g. "vibeflow-reviewer"), generate a PAT with `repo` scope, export it as
+# an env var, and point this at the env var name.
+# If unset or the env var is empty, vibe-review falls back to posting a plain
+# `gh pr comment` (no formal review state on the PR).
+review:
+  reviewer_token_env: ""       # e.g. "VIBEFLOW_REVIEWER_TOKEN"
+
 # Per-issue tier overrides (manual).
 tier_overrides:
   # "ISSUE-42": T3

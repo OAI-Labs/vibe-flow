@@ -39,7 +39,14 @@ gh pr checks $PR --json state,conclusion
 
 # 2. Review status
 gh pr view $PR --json reviewDecision
-# Must be APPROVED
+# Must be APPROVED.
+# EXCEPTION: if `.vibe-flow.yaml → review.reviewer_token_env` is unset OR its
+# env var is empty, vibe-review may have fallen back to posting a plain comment
+# (because GitHub blocks self-review). In that case `reviewDecision` will be
+# null / REVIEW_REQUIRED. Trust state.json instead:
+#   - state.json.status == "approved" → gate passes
+#   - otherwise → fail
+# If reviewer_token_env IS configured, both signals must agree (defense in depth).
 
 # 3. Mergeable?
 gh pr view $PR --json mergeable,mergeStateStatus
@@ -54,8 +61,14 @@ PR_BASE=$(gh pr view $PR --json baseRefOid --jq '.baseRefOid')
 
 If ANY gate fails → STOP, do not merge. Route:
 - CI failing → `vibe-dispatch-fix` with CI logs
-- Review not approved → wait or escalate
+- Review not approved (and state.json fallback also says not approved) → wait or escalate
 - Conflicts / behind → `vibe-flow:vibe-rebase`
+
+**Note on protected branches:** if `main` requires an approving review via branch
+protection, the GitHub merge call (Step 2) will fail when the fallback comment
+path was used — there's no formal approval recorded. Either configure
+`review.reviewer_token_env` (recommended), disable the protection rule, or merge
+manually. vibe-merge surfaces the GitHub error rather than silently bypassing.
 
 ### Step 2: Squash merge
 

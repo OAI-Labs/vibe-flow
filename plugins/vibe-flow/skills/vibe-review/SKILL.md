@@ -74,21 +74,40 @@ minor: [...]
 
 ### Step 4: Post to GitHub
 
+**Reviewer identity.** GitHub rejects `addPullRequestReview` with `APPROVE` or
+`REQUEST_CHANGES` when the auth user is the PR author (error: *"Can not request
+changes on your own pull request"*). Resolve the auth token before calling `gh`:
+
+```bash
+REVIEWER_ENV=$(yq '.review.reviewer_token_env // ""' .vibe-flow.yaml)
+if [ -n "$REVIEWER_ENV" ] && [ -n "${!REVIEWER_ENV}" ]; then
+  GH="GH_TOKEN=${!REVIEWER_ENV} gh"   # use bot PAT (e.g. vibeflow-reviewer)
+else
+  GH="gh"                              # default auth; may fail on own PR
+fi
+```
+
 **A. If `approve` or `approve-with-minor`:**
 ```bash
-gh pr review <PR> --approve --body "$BODY"
+eval "$GH pr review <PR> --approve --body \"\$BODY\"" 2>/tmp/gh_err || _fallback_comment
 ```
 where `$BODY` contains the overall summary + minor items as nits.
 
 **B. If `request-changes` or `reject` (any critical or spec fail):**
 ```bash
-gh pr review <PR> --request-changes --body "$BODY"
+eval "$GH pr review <PR> --request-changes --body \"\$BODY\"" 2>/tmp/gh_err || _fallback_comment
 ```
 Body includes:
 - Spec compliance status
 - All critical items (with file:line refs)
 - All important items
 - Minor items
+
+**Fallback** (`_fallback_comment`): if the error matches `Can not (request changes|approve) (on )?your own pull request`, post the body as a plain comment instead — the review state on the PR will not change, but findings are still visible:
+```bash
+gh pr comment <PR> --body "$BODY"
+```
+Any other `gh` error → propagate, do not swallow.
 
 Use `gh pr comment` or multiple inline `gh api` calls for file-level comments:
 ```bash
@@ -158,6 +177,8 @@ Before claiming review done:
 ```bash
 gh pr view <PR> --json reviews --jq '.reviews[-1].state'
 # should be APPROVED or CHANGES_REQUESTED
+# (skip this check if the fallback comment path was taken — there will be no
+#  new review entry, only a new comment)
 ```
 
 ## Output
