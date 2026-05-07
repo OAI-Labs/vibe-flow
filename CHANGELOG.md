@@ -3,6 +3,23 @@
 All notable changes to vibe-flow. Follows [Keep a Changelog](https://keepachangelog.com/)
 and [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] — 2026-05-07
+
+### Fixed
+- **`vibe-review`** — handle GitHub's *"Can not request changes on your own
+  pull request"* error. Added optional `review.reviewer_token_env` config
+  pointing at an env var that holds a bot account PAT (e.g.
+  `vibeflow-reviewer`); when unset or empty, vibe-review falls back to
+  posting the review body as a plain `gh pr comment`.
+- **`vibe-merge`** — relaxed the `reviewDecision == APPROVED` gate to trust
+  `state.json.status == approved` when `review.reviewer_token_env` is unset,
+  so the comment-fallback path doesn't permanently block merges. When the
+  bot env var IS configured, both signals must agree.
+
+### Added
+- **`.vibe-flow.example.yaml`** — `review.reviewer_token_env` field with
+  setup instructions for a separate reviewer bot account.
+
 ## [0.2.0] — 2026-04-24
 
 ### Added
