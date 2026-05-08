@@ -80,23 +80,26 @@ If user says "modify": let them override tiers or remove issues, then re-present
 
 For each wave L:
 
-**4a. Pre-wave sync**
+**4a. Pre-wave sync** (MUST run before any 4b call in this wave)
 ```bash
 git fetch origin
 git checkout main
 git pull origin main
+BASE_SHA=$(git rev-parse origin/main)
 ```
+
+Persist `BASE_SHA` to `state.json` as `waves[L].base_sha`. This is the authoritative base for every workspace dispatched in this wave — it pins workspaces to a post-Wave-(L-1)-merge HEAD and eliminates the race between the local pull and the MCP server-side workspace clone.
 
 **4b. For each issue in wave (parallel):**
 1. Compute tier via `executor-routing.md`
 2. Honor `max_opus_per_wave` — downgrade lowest-criticality opus issues to sonnet-high
-3. Build prompt: `{issue_description}` + closing-protocol template
+3. Build prompt: opening-protocol template (see `references/prompt-templates.md` §0, with `{{BASE_SHA}}` filled from `waves[L].base_sha`) + `{issue_description}` + closing-protocol template
 4. Call MCP `start_workspace`:
    ```
    executor = tier.executor
    variant = tier.variant
    name = "<simple-id> <slug>"
-   repositories = [{repo_id, branch: "main"}]
+   repositories = [{repo_id, branch: <BASE_SHA>}]   # resolved SHA, NOT "main"
    issue_id = issue.id
    prompt = built_prompt
    ```

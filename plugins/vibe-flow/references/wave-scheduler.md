@@ -49,11 +49,15 @@ For each issue in wave L:
 ```
 1. Triage tier (executor-routing.md algorithm)
 2. Allocate executor/variant honoring max_opus_per_wave
-3. git pull origin main (at wave start — shared for all issues in wave)
-4. start_workspace(executor, variant, branch="main", name="<issue-id> <slug>", issue_id, prompt+closing-protocol)
+3. (Once per wave, before any dispatch) git fetch origin && git pull origin main
+   then BASE_SHA = git rev-parse origin/main → save to state.json as waves[L].base_sha
+4. start_workspace(executor, variant, branch=<BASE_SHA>, name="<issue-id> <slug>", issue_id,
+                   prompt = opening-protocol + issue_description + closing-protocol)
 5. Read actual feature branch from workspace response → save to state.json
 6. Record dispatch in state.json
 ```
+
+**Why a resolved SHA, not `"main"`?** The orchestrator's `git pull` only updates the orchestrator's local clone. The MCP `start_workspace` call creates a workspace on the server side, which resolves `"main"` against `origin` at its own clock — a race window in which a still-merging Wave-(L-1) PR can leave the workspace based on pre-merge HEAD. Pinning to a resolved SHA captured immediately after the local pull eliminates this window. The opening-protocol preamble in the workspace prompt is belt-and-suspenders — it self-syncs the workspace to that SHA on first run.
 
 ## Barrier semantics
 
@@ -68,12 +72,24 @@ Wave L done when ALL issues have:
 
 Then L+1 starts. Safest. Slowest if any PR is slow to review.
 
-### `wave_barrier: pr-open` (fast)
+### `wave_barrier: pr-open` (fast — UNSAFE FOR SHARED FILES)
 
-Wave L done when ALL issues have pushed and opened PRs.
-L+1 starts with base = origin/main (pre-wave-L).
+Wave L done when ALL issues have pushed and opened PRs (no merge required).
+L+1 dispatches with `base_sha = origin/main` **as it stood before Wave L
+merged** — by definition, since Wave L hasn't merged yet.
 
-Risk: if multiple waves are in review simultaneously, late merges may conflict with each other. Use only for independent feature work.
+**The SHA-pinning fix in Step 4 cannot help here.** SHA pinning eliminates the
+race between the local pull and the MCP server-side clone within a single
+wave; it cannot manufacture commits that haven't merged yet. With `pr-open`,
+Wave L+1 workspaces will branch from pre-Wave-L `main` on purpose, and any
+Wave L+1 task that touches a file Wave L also touches will either:
+- conflict at merge time, OR
+- silently re-implement work Wave L already did (depending on overlap shape).
+
+**Use `pr-open` only when waves are guaranteed to touch disjoint files** —
+e.g., independent feature work in separate modules, or each wave operating
+on its own repo in a multi-repo setup. For any plan with even partial file
+overlap between waves, stick with the default `wave_barrier: merge`.
 
 ## State persistence
 
@@ -88,6 +104,7 @@ Risk: if multiple waves are in review simultaneously, late merges may conflict w
     {
       "level": 0,
       "status": "completed",
+      "base_sha": "abc123...",
       "issues": [
         {
           "issue_id": "91dfb411-...",
@@ -109,6 +126,7 @@ Risk: if multiple waves are in review simultaneously, late merges may conflict w
     {
       "level": 1,
       "status": "in_progress",
+      "base_sha": "def456...",
       "issues": [
         {
           "issue_id": "b8e2...",
@@ -154,6 +172,13 @@ On vibe-flow start:
    - Reconcile each issue's actual state (query MCP + git + gh)
    - Resume from last consistent state
    - Skip already-merged issues
+   - **Before re-dispatching any issue in a partially-completed wave L**, re-run
+     pre-wave sync (`git fetch origin && git pull origin main`), recompute
+     `BASE_SHA = git rev-parse origin/main`, and **overwrite** `waves[L].base_sha`
+     in state.json with the fresh value. Pass the refreshed `BASE_SHA` to every
+     re-dispatched `start_workspace` call. Resume otherwise risks branching new
+     workspaces from a SHA captured before the crash, which may predate merges
+     that landed during the outage.
 
 ## Concurrency limits
 
