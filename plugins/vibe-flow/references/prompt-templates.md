@@ -38,6 +38,12 @@ have provided.
 
 ## 1. Closing protocol (append to EVERY `start_workspace` prompt)
 
+`vibe-ship` detects turn-end via VK's `get_execution.is_finished`, not by scanning your
+output — so the FINAL REPORT below is **payload, not termination signal**. Emit it so the
+orchestrator can extract branch/SHA/notes without re-deriving from git, but if you crash or
+get killed before emitting it, vibe-ship still notices via `is_finished` and routes you to
+`vibe-dispatch-fix`. Push the branch reliably; that's the real success gate.
+
 ```text
 ---
 ## CLOSING PROTOCOL (required)

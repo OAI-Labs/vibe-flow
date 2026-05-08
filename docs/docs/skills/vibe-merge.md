@@ -33,8 +33,12 @@ Any fail → stop, route:
 
 - Update vibe-kanban issue to `done`
 - Write `state.json` with `status: merged`, `merge_sha`, `merged_at`
-- Archive workspace (MCP)
 - Schedule branch deletion per `archive.delete_branch_after_days`
+
+vibe-merge does not call `update_workspace(archived=true)` &mdash; vibe-kanban&rsquo;s
+PR monitor service auto-archives a workspace once all of its PRs reach a
+terminal state (merged/closed). Use `delete_workspace` directly only if you
+need an immediate hard delete.
 
 ## Hotfix bypass
 

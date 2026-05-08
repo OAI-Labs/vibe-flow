@@ -123,9 +123,16 @@ Use MCP `update_issue` to:
 }
 ```
 
-**C. Archive workspace (optional but recommended):**
+**C. Workspace archival — handled by VK:**
 
-Call MCP `update_workspace` to archive (if archive flag supported) or `delete_workspace` after `archive.keep_workspace_after_merge_days`.
+Do NOT call `update_workspace(archived=true)` here. VK's `PrMonitorService` flips the
+workspace to archived automatically once **all** of its PRs are merged or closed (see
+BloopAI/vibe-kanban `services` crate). Calling `update_workspace` ourselves races that
+service and creates two writers for the same field.
+
+If `config.archive.keep_workspace_after_merge_days == 0` AND you want immediate hard
+delete (not just archive), call `delete_workspace` directly. Otherwise leave it; a
+separate cleanup job (or VK's own retention) handles the eventual delete.
 
 **D. Branch deletion:**
 

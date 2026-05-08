@@ -65,7 +65,7 @@ For each issue in wave L:
 ### `wave_barrier: merge` (default, strict)
 
 Wave L done when ALL issues have:
-- Workspace complete (FINAL REPORT received)
+- Workspace finished (`get_execution.is_finished == true`)
 - PR opened (vibe-link)
 - Review approved (vibe-review)
 - Merged to main (vibe-merge)
@@ -149,9 +149,9 @@ overlap between waves, stick with the default `wave_barrier: merge`.
 
 ### Status values per issue
 
-- `dispatched` — workspace started, no report yet
-- `workspace_running` — still running (long task)
-- `workspace_complete` — FINAL REPORT received, branch pushed
+- `dispatched` — workspace started, `is_finished == false`
+- `workspace_running` — still running (long task), `is_finished == false`
+- `workspace_complete` — `is_finished == true` (status: completed) and branch pushed to origin
 - `pr_open` — PR created by vibe-link
 - `in_review` — vibe-review running
 - `review_critical` — review blocked, waiting on fix

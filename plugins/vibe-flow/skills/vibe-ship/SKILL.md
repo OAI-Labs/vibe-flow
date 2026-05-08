@@ -110,14 +110,22 @@ Persist `BASE_SHA` to `state.json` as `waves[L].base_sha` — **audit only**. Th
 
 **4c. Wait for wave barrier**
 
-Poll each workspace's sessions (`list_sessions` + `get_execution`) until:
-- FINAL REPORT received (`status: complete` or `blocked`)
-- OR `workspace_timeout_minutes` elapsed
+Poll each workspace's latest execution (`list_sessions` → newest session → `get_execution`)
+until **`is_finished == true`** OR `workspace_timeout_minutes` elapsed. `is_finished` is
+authoritative — VK derives it server-side from `ExecutionProcessStatus != Running`, so it
+also fires on `failed` / `killed`, not just clean exit. No need to parse the agent's text
+output to know the turn ended.
 
-For each completed workspace:
-- If `status: complete`: trigger `vibe-flow:vibe-link` to open/link PR
-- If `status: blocked`: log, leave for user
-- If timeout: mark failed, schedule `vibe-dispatch-fix`
+Once `is_finished`, branch the routing on `status` + the agent's last assistant message
+(parse `<VIBE-FLOW-REPORT>` if present — it's now optional payload, not the termination signal):
+
+- `status: completed` AND branch pushed to origin → trigger `vibe-flow:vibe-link`
+- `status: completed` AND `<VIBE-FLOW-REPORT> status: blocked` (or no branch on origin) → log, leave for user
+- `status: failed` / `killed` → mark failed, schedule `vibe-dispatch-fix`
+- timeout (still `running` past deadline) → mark failed, schedule `vibe-dispatch-fix`
+
+Branch existence on origin (`git ls-remote --heads origin <branch>`) is the ground-truth
+gate for "did the workspace actually push" — don't trust the FINAL REPORT marker alone.
 
 **4d. Per-issue closing flow**
 

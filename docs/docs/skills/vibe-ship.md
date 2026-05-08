@@ -25,12 +25,13 @@ See [waves & the DAG](../concepts/waves.md). Two barrier modes: `merge`
 ## Per-issue sub-loop
 
 1. Dispatch workspace (executor picked by tier)
-2. Wait for `FINAL REPORT`
+2. Wait for `get_execution.is_finished == true` (VK-authoritative;
+   `<VIBE-FLOW-REPORT>` is optional payload, not the termination signal)
 3. `vibe-link` → opens/links PR, moves issue to `in_review`
 4. `vibe-review` → fresh subagent reviews, posts to GitHub
 5. If critical → `vibe-dispatch-fix` (bounded re-tries)
 6. If behind main → `vibe-rebase`
-7. `vibe-merge` → squash, close, archive
+7. `vibe-merge` → squash, close (VK auto-archives the workspace)
 
 ## Escalation ceiling
 

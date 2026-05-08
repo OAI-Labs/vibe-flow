@@ -3,6 +3,35 @@
 All notable changes to vibe-flow. Follows [Keep a Changelog](https://keepachangelog.com/)
 and [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+## [0.2.4] — 2026-05-08
+
+### Changed
+- **`vibe-ship` Step 4c — wave barrier waits on `get_execution.is_finished`** instead of
+  scanning agent output for the `<VIBE-FLOW-REPORT>` marker. VK exposes execution status
+  authoritatively (`crates/db/src/models/execution_process.rs` enum
+  `ExecutionProcessStatus { Running, Completed, Failed, Killed }`; MCP tool
+  `get_execution` returns `is_finished: bool` derived from `status != Running`). Polling
+  the boolean is more reliable: it fires on `failed` / `killed` too, which previously
+  only surfaced via `workspace_timeout_minutes`. The FINAL REPORT block is now optional
+  payload (used to extract branch/SHA/notes) rather than the termination signal — if the
+  agent crashes before emitting it, vibe-ship still notices and routes to
+  `vibe-dispatch-fix`. `wave-scheduler.md` and `prompt-templates.md §1` updated to match.
+- **`vibe-link` Step 4 — dropped the `[vibe-flow] PR opened: <url>` description marker.**
+  VK's `PrMonitorService` polls open PRs every 60s and auto-fills `pull_requests[]` /
+  `latest_pr_url` on the issue (see `IssueDetails` in
+  `crates/mcp/src/task_server/tools/remote_issues.rs`). Writing a duplicate marker into
+  the issue description created two sources of truth that drifted. The `in_review` status
+  transition is still required (VK does not auto-transition on PR open). Idempotency
+  dedup now relies solely on `gh pr list --head <branch>` (already present in Step 2)
+  and state.json.
+- **`vibe-merge` Step 4C — dropped manual `update_workspace(archived=true)`.** VK
+  auto-archives a workspace once all its PRs reach a terminal state (merged/closed) via
+  the same PR monitor service. The manual call raced VK's writer. `delete_workspace` is
+  still available for users who want immediate hard delete via
+  `archive.keep_workspace_after_merge_days = 0`.
+
 ## [0.2.3] — 2026-05-08
 
 ### Fixed

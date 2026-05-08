@@ -24,8 +24,12 @@ Usually auto-invoked by vibe-ship after each workspace reports complete.
 3. Creates PR if needed (title, body from issue + FINAL REPORT)
 4. **Moves issue to `in_review`** (resolves name from
    `.vibe-flow.yaml → statuses.in_review`)
-5. Appends PR URL to issue comments / description
-6. Updates `state.json` with `pr_url`, `pr_number`, `status: pr_open`
+5. Updates `state.json` with `pr_url`, `pr_number`, `status: pr_open`
+
+vibe-link no longer writes a `[vibe-flow] PR opened:` marker into the issue
+description &mdash; vibe-kanban&rsquo;s PR monitor auto-fills `pull_requests[]` /
+`latest_pr_url` on the issue every 60s, so the marker would be a duplicate
+source of truth.
 
 ## Optional CI wait
 
@@ -34,8 +38,9 @@ If `skip_ci_wait: false`, watches the first CI run and routes to
 
 ## Idempotent
 
-Running twice won&rsquo;t duplicate PRs or comments. Looks for existing
-`[vibe-flow] PR opened:` markers.
+Running twice won&rsquo;t duplicate PRs &mdash; `gh pr list --head <branch>`
+is the dedup gate. Re-transitioning to `in_review` when already `in_review`
+is a safe no-op.
 
 ## Full reference
 

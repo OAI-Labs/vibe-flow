@@ -91,19 +91,21 @@ Capture the PR URL from output.
 
 ### Step 4: Link PR ↔ issue
 
-**A. Update vibe-kanban issue:**
+**A. Transition vibe-kanban issue to `in_review`:**
 
-Call `update_issue` to do BOTH:
+Call `update_issue(issue_id, status=<resolved>)`. Resolve the exact status name from
+`.vibe-flow.yaml → statuses.in_review` (vibe-kanban columns are project-configurable). If
+the key is unset, fall back to `list_issues` to discover the enum, or leave status
+untouched and log a warning — never hardcode a name.
 
-1. **Transition status → `in_review`.** Resolve the exact status name from `.vibe-flow.yaml → statuses.in_review` (vibe-kanban columns are project-configurable). If the key is unset, fall back to `list_issues` to discover the enum, or leave status untouched and log a warning — never hardcode a name.
-2. **Append PR URL** to description / comment:
-   ```
-   [vibe-flow] PR opened: <PR_URL>
-   Branch: <BRANCH_NAME>
-   Commit: <SHA>
-   ```
+The board must reflect that work is out of `in_progress` and waiting on a reviewer. VK
+does **not** auto-transition status when a PR opens, so this call is required.
 
-The board must reflect that work is out of `in_progress` and waiting on a reviewer. If MCP offers no comment API, fold the PR URL block into the description via the same `update_issue` call.
+**Do NOT** also write a `[vibe-flow] PR opened: <url>` line into the issue description.
+VK runs a `PrMonitorService` (60s poll) that auto-fills `pull_requests[]` and
+`latest_pr_url` on the issue from the underlying repo's PR list — duplicating it into the
+description creates two sources of truth that drift. `get_issue(issue_id)` already returns
+the linked PR(s) directly.
 
 **B. Update PR body with back-link:**
 
@@ -188,9 +190,9 @@ If the workspace touches multiple repos:
 ## Idempotency
 
 Running `vibe-link` twice on same workspace should:
-- Not create duplicate PRs (Step 2 check)
-- Not duplicate issue comments (check existing comments for `[vibe-flow] PR opened:` marker)
-- Re-sync state.json if PR state changed
+- Not create duplicate PRs — Step 2's `gh pr list --head <branch>` is the dedup gate
+- Not re-transition status if issue is already in `in_review` (cheap to call; safe to skip)
+- Re-sync state.json if PR state changed (VK's `PrMonitorService` may have updated `latest_pr_status`)
 
 ## Failure modes
 
