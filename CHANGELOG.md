@@ -3,6 +3,38 @@
 All notable changes to vibe-flow. Follows [Keep a Changelog](https://keepachangelog.com/)
 and [Semantic Versioning](https://semver.org/).
 
+## [0.2.2] — 2026-05-08
+
+### Fixed
+- **`vibe-ship` / `wave-scheduler`** — subsequent waves no longer dispatch
+  workspaces from a stale `main`. The pre-wave `git pull` ran only in the
+  orchestrator's local shell while `start_workspace` was called with
+  `branch: "main"` (a floating ref), leaving a race window in which the MCP
+  server-side workspace clone could resolve `main` to a SHA from before the
+  previous wave's merges landed. Wave 2 tasks could end up branched off
+  pre-Wave-1 `main` and re-implement work that had already merged.
+  - Step 4a now captures `BASE_SHA = git rev-parse origin/main` after the
+    pull and persists it to `state.json` as `waves[L].base_sha`.
+  - Step 4b passes the resolved `BASE_SHA` to `start_workspace` as the
+    `branch` argument instead of the literal string `"main"`.
+  - The Resume protocol re-runs the pre-wave sync (and overwrites
+    `waves[L].base_sha`) before re-dispatching any in-flight issue, so a
+    crash during a wave does not freeze the base at a now-stale SHA.
+
+### Added
+- **`prompt-templates.md` — Opening protocol (§0)** — prepended to every
+  workspace prompt as a belt-and-suspenders self-sync. The agent's first
+  action is `git fetch origin && git checkout main && git reset --hard
+  {{BASE_SHA}} && git checkout -b {{BRANCH_NAME}}`, with a hard-stop
+  `<VIBE-FLOW-REPORT> status: blocked` if the workspace base does not
+  match the recorded `BASE_SHA`.
+
+### Changed
+- **`wave-scheduler.md` — `wave_barrier: pr-open` warning** sharpened to
+  spell out that SHA pinning cannot rescue this mode (Wave N+1 dispatches
+  before Wave N merges by design), and that it should be used only when
+  waves are guaranteed to touch disjoint files.
+
 ## [0.2.1] — 2026-05-07
 
 ### Fixed

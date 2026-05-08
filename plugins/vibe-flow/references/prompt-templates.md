@@ -2,6 +2,37 @@
 
 Reusable prompt fragments injected into workspace sessions and subagent dispatches. Fill placeholders (`{{ VAR }}`) before sending.
 
+## 0. Opening protocol (prepend to EVERY `start_workspace` prompt)
+
+```text
+## OPENING PROTOCOL (required — run BEFORE any task work)
+
+Your workspace may have been cloned before the most recent merges to `main`
+landed. Sync to the authoritative wave base before doing anything else:
+
+1. git fetch origin
+2. git checkout main
+3. git reset --hard {{BASE_SHA}}    # pin to the wave base recorded by vibe-ship
+4. git checkout -b {{BRANCH_NAME}}  # your feature branch off the fresh base
+
+Verify with `git log -1 --oneline` that HEAD matches {{BASE_SHA}}. If it does
+not, STOP and report:
+
+   <VIBE-FLOW-REPORT>
+   status: blocked
+   reason: workspace base mismatch — expected {{BASE_SHA}}, got <actual>
+   needs: human investigation
+   </VIBE-FLOW-REPORT>
+
+Only after the opening protocol succeeds, proceed to the task below.
+---
+```
+
+This protocol is belt-and-suspenders to the SHA-pinned `branch` argument that
+`vibe-ship` passes to `start_workspace`. Even if the server-side workspace
+clone landed slightly stale (race between local pull and MCP call), this
+preamble self-corrects to `{{BASE_SHA}}` before the agent does any work.
+
 ## 1. Closing protocol (append to EVERY `start_workspace` prompt)
 
 ```text
