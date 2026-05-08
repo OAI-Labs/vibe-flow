@@ -7,20 +7,20 @@ Reusable prompt fragments injected into workspace sessions and subagent dispatch
 ```text
 ## OPENING PROTOCOL (required — run BEFORE any task work)
 
-Your workspace may have been cloned before the most recent merges to `main`
-landed. Sync to the authoritative wave base before doing anything else:
+Your workspace may have been cloned or cached before the most recent merges
+to `main` landed. Pull the latest code from origin before doing anything else:
 
 1. git fetch origin
 2. git checkout main
-3. git reset --hard {{BASE_SHA}}    # pin to the wave base recorded by vibe-ship
-4. git checkout -b {{BRANCH_NAME}}  # your feature branch off the fresh base
+3. git pull --ff-only origin main
+4. git checkout -b {{BRANCH_NAME}}    # your feature branch off the fresh base
 
-Verify with `git log -1 --oneline` that HEAD matches {{BASE_SHA}}. If it does
-not, STOP and report:
+If step 3 fails (non-fast-forward, divergent local main, network error), STOP
+and report:
 
    <VIBE-FLOW-REPORT>
    status: blocked
-   reason: workspace base mismatch — expected {{BASE_SHA}}, got <actual>
+   reason: opening-protocol sync failed — <command> returned <error>
    needs: human investigation
    </VIBE-FLOW-REPORT>
 
@@ -28,10 +28,13 @@ Only after the opening protocol succeeds, proceed to the task below.
 ---
 ```
 
-This protocol is belt-and-suspenders to the SHA-pinned `branch` argument that
-`vibe-ship` passes to `start_workspace`. Even if the server-side workspace
-clone landed slightly stale (race between local pull and MCP call), this
-preamble self-corrects to `{{BASE_SHA}}` before the agent does any work.
+This protocol is the primary mechanism that keeps wave-N+1 workspaces from
+operating on pre-wave-N code. The vibe-kanban API does not let `vibe-ship`
+pin the workspace to a specific SHA via `repositories[].branch` — it only
+accepts branch names — so we cannot rely on the API to hand the workspace a
+fresh tree. The agent self-syncs by re-fetching from `origin` inside the
+workspace, defeating any stale cached/pre-staged clone the MCP server may
+have provided.
 
 ## 1. Closing protocol (append to EVERY `start_workspace` prompt)
 

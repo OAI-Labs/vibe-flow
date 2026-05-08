@@ -88,18 +88,18 @@ git pull origin main
 BASE_SHA=$(git rev-parse origin/main)
 ```
 
-Persist `BASE_SHA` to `state.json` as `waves[L].base_sha`. This is the authoritative base for every workspace dispatched in this wave — it pins workspaces to a post-Wave-(L-1)-merge HEAD and eliminates the race between the local pull and the MCP server-side workspace clone.
+Persist `BASE_SHA` to `state.json` as `waves[L].base_sha` — **audit only**. The vibe-kanban API rejects raw SHAs in `start_workspace.repositories[].branch` (only branch names are accepted), so we cannot pin workspaces to a specific SHA at the API layer. The actual freshness guarantee comes from the Opening protocol injected into every workspace prompt (item 3 below) — the agent runs `git fetch origin && git pull --ff-only origin main` as its first action, forcing a real fetch from `origin` inside the workspace and bypassing whatever cached/pre-staged clone the MCP server may have provided. `base_sha` in `state.json` is for post-hoc audit (cross-checking what HEAD a wave was dispatched against).
 
 **4b. For each issue in wave (parallel):**
 1. Compute tier via `executor-routing.md`
 2. Honor `max_opus_per_wave` — downgrade lowest-criticality opus issues to sonnet-high
-3. Build prompt: opening-protocol template (see `references/prompt-templates.md` §0, with `{{BASE_SHA}}` filled from `waves[L].base_sha`) + `{issue_description}` + closing-protocol template
+3. Build prompt: opening-protocol template (see `references/prompt-templates.md` §0) + `{issue_description}` + closing-protocol template. The opening protocol is what actually defeats stale-workspace bugs.
 4. Call MCP `start_workspace`:
    ```
    executor = tier.executor
    variant = tier.variant
    name = "<simple-id> <slug>"
-   repositories = [{repo_id, branch: <BASE_SHA>}]   # resolved SHA, NOT "main"
+   repositories = [{repo_id, branch: "main"}]
    issue_id = issue.id
    prompt = built_prompt
    ```

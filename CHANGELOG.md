@@ -3,6 +3,40 @@
 All notable changes to vibe-flow. Follows [Keep a Changelog](https://keepachangelog.com/)
 and [Semantic Versioning](https://semver.org/).
 
+## [0.2.3] — 2026-05-08
+
+### Fixed
+- **`vibe-ship` — wave dispatch was broken in 0.2.2** (regression). The
+  fix shipped in 0.2.2 passed the resolved `BASE_SHA` directly to
+  `start_workspace.repositories[].branch`, but the vibe-kanban API only
+  accepts branch names in that field — raw SHAs are rejected, causing
+  every wave dispatch to fail at the API layer. Switching to
+  `"origin/main"` does not help either: both `main` and `origin/main`
+  are local refs that go stale until VK runs `git fetch`. The actual
+  freshness mechanism is the Opening protocol's `git pull` inside the
+  workspace; the SHA-as-branch piece in 0.2.2 added nothing and broke
+  dispatch.
+  - `vibe-ship` Step 4b item 4 reverted: `branch: "main"` (matches VK's
+    default-target convention) instead of `branch: <BASE_SHA>`.
+  - `wave-scheduler.md` Step 4 sub-step 4 reverted likewise; the
+    "Why a resolved SHA" rationale rewritten to explain why the
+    Opening protocol is the actual mechanism and the SHA arg was a
+    dead end.
+  - `prompt-templates.md` §0 Opening protocol simplified: agent's first
+    action is now `git fetch origin && git checkout main &&
+    git pull --ff-only origin main && git checkout -b {{BRANCH_NAME}}`,
+    with hard-stop blocked report on non-fast-forward / network error.
+    Dropped the `git reset --hard {{BASE_SHA}}` step (BASE_SHA is no
+    longer in the prompt).
+  - `wave-scheduler.md` `wave_barrier: pr-open` warning rewritten:
+    Opening protocol cannot rescue this mode either (Wave N+1 dispatches
+    before Wave N merges by design — there is nothing to pull yet).
+
+### Changed
+- **`waves[L].base_sha`** is now documented as **audit metadata only**
+  (post-hoc cross-checking of what HEAD a wave was dispatched against),
+  not a wire-level field. State.json schema unchanged.
+
 ## [0.2.2] — 2026-05-08
 
 ### Fixed
