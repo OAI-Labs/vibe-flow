@@ -5,6 +5,20 @@ and [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.5] — 2026-05-11
+
+### Changed
+- **`vibe-plan` Step 1 — single-issue short-circuit uses concrete criteria** instead of
+  the old `< 300 char` proxy. Skips full planning when fewer than 2 acceptance criteria
+  apply, estimated change ≤ 30 LOC, or only 1 file is touched with no cross-file
+  dependencies. Char count alone misclassified medium specs as trivial and vice versa.
+- **`vibe-plan` Step 4.5 (new) — coalesce micro-tasks.** After the DAG is valid, merge
+  linear T0/T1 chains where the child has a single parent, no other blocking children,
+  and overlapping file scope. Also flags plans whose median leaf is under 20 estimated
+  LOC as likely over-decomposed and offers the user a choice (coalesce more aggressively,
+  re-decompose higher, or keep as-is). Reduces per-issue orchestration overhead
+  (workspace + review + CI) for specs that fan out into many tiny leaves.
+
 ## [0.2.4] — 2026-05-08
 
 ### Changed
