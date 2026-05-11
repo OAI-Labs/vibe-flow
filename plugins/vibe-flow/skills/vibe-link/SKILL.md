@@ -35,7 +35,11 @@ Do NOT use if:
 ### Step 1: Fetch workspace info
 
 Call MCP `get_execution` or `list_sessions` for the workspace. Extract:
-- `branch` (from FINAL REPORT or workspace metadata)
+- `branch` — **prefer the value from the agent's FINAL REPORT.** VK workspace metadata
+  also exposes a "working branch" field, but it is VK's internal auto-generated name
+  (sometimes truncated in the UI) and is NOT guaranteed to equal the actual branch the
+  agent pushed to `origin`. Trust the FINAL REPORT first; fall back to VK metadata only
+  if FINAL REPORT is missing.
 - `issue_id` (from workspace link)
 - `commit_sha` (from FINAL REPORT)
 
@@ -45,7 +49,13 @@ git fetch origin
 git ls-remote --heads origin <BRANCH_NAME>
 ```
 
-If branch not on origin → STOP, workspace didn't actually push. Mark issue state: `push_missing`, alert user.
+If branch not on origin:
+- If FINAL REPORT was the source → STOP, workspace didn't push. Mark `push_missing`, alert user.
+- If VK metadata was the source (FINAL REPORT missing) → flag `branch_mismatch` and ask
+  the user to inspect; do NOT silently try the truncated working branch name.
+
+Record the verified branch into `state.json[issue].branch` so downstream skills
+(`vibe-status`, `vibe-merge`) have a single canonical value.
 
 ### Step 2: Check for existing PR
 

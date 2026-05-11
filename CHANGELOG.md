@@ -5,6 +5,27 @@ and [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.6] — 2026-05-11
+
+### Changed
+- **`vibe-status` Step 2 — primary source of truth switched to git + GitHub.** VK MCP
+  status calls (`get_issue`, `list_sessions`, `list_workspaces`) have been unreliable.
+  Workspace state is now derived from branch commit activity: `git ls-remote` for
+  existence, `git log origin/main..origin/<branch>` for recency/author, and
+  `gh pr list --head <branch>` for PR/CI/review state. Added a derivation table mapping
+  observable signals (last commit age, PR state, CI rollup) to states like `running`,
+  `pushing`, `workspace_stuck`, `ci_fail`, `merge_pending`. VK MCP is kept as a soft
+  cross-check with a short timeout — drift is reported as `vk_drift` (info only) and
+  errors/timeouts are ignored. Standalone mode (no state.json) now seeds from
+  `git for-each-ref` of recent remote branches instead of `list_workspaces`.
+- **`vibe-status` + `vibe-link` — canonical branch is the FINAL REPORT branch, never VK's
+  working branch.** VK auto-generates an internal "working branch" per workspace that may
+  be truncated in the UI and is not guaranteed to match the branch the agent pushed.
+  Agents were conflating the two. `vibe-link` now explicitly prefers the FINAL REPORT
+  branch and only falls back to VK metadata if the report is missing; if the metadata
+  branch is not on `origin`, it flags `branch_mismatch` instead of silently retrying.
+  `vibe-status` adds a `branch_mismatch` inconsistency flag and a callout in Step 2.
+
 ## [0.2.5] — 2026-05-11
 
 ### Changed
