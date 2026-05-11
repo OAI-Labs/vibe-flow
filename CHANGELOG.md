@@ -5,6 +5,33 @@ and [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-05-11
+
+### Added
+- **`vibe-ship-fast`** — local-mode dispatch skill. Reads `.vibe-flow/plan-local.json`,
+  creates a `dev-wave-<ts>` integration branch off `main`, spawns one sub-agent per
+  feature via the Agent tool with `isolation: "worktree"`, merges each wave locally,
+  runs `vibe-reviewer` per wave on the wave diff, and opens a single final PR to
+  `main` at the end. No vibe-kanban API calls, no per-feature PRs.
+- **`vibe-import-kanban`** — read-only snapshot from a vibe-kanban project to
+  `.vibe-flow/plan-local.json`. Preserves `kanban_id` and `simple_id` on each issue
+  so `vibe-export-kanban` can sync the result back after merge. Drops out-of-scope
+  dependency edges with a warning. Never writes to kanban.
+- **`vibe-export-kanban`** — one-way sync back to vibe-kanban after the final
+  `vibe-ship-fast` PR is merged. Posts a comment with the PR url + merge SHA on
+  each linked issue and transitions it to done. Idempotent via the marker comment
+  `<!-- vibe-flow:merged sha=<SHA> -->`. Never touches title, description, tags,
+  or relationships — teammates own that metadata.
+- **`vibe-plan --local`** flag — writes the plan to `.vibe-flow/plan-local.json`
+  instead of calling `create_issue` on vibe-kanban. Plan schema now includes
+  `source`, `kanban_id`, and `simple_id` fields per issue.
+
+### Changed
+- **`plan-local.json` schema** now standardized across `vibe-plan --local`,
+  `vibe-import-kanban`, and `vibe-ship-fast`. `source` field distinguishes
+  `"vibe-plan"`, `"vibe-import-kanban"`, and `"manual"`. `waves` is precomputed
+  and embedded so downstream skills don't recompute the DAG.
+
 ## [0.2.7] — 2026-05-11
 
 ### Added

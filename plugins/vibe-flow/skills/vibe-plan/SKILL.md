@@ -1,6 +1,6 @@
 ---
 name: vibe-plan
-description: Use when you have a spec, feature request, or set of requirements that needs to be broken into vibe-kanban issues - decomposes the spec into an issue tree with dependencies, assigns priorities and tier estimates, creates all issues in the project
+description: Use when you have a spec, feature request, or set of requirements that needs to be broken into vibe-kanban issues - decomposes the spec into an issue tree with dependencies, assigns priorities and tier estimates, creates all issues in the project. Pass --local to write the plan to .vibe-flow/plan-local.json instead of vibe-kanban (for use with vibe-ship-fast).
 ---
 
 # vibe-plan
@@ -151,6 +151,8 @@ If user says "modify" → accept edits and re-present.
 
 ### Step 7: Create issues
 
+**Mode selection:** check `$ARGUMENTS` for `--local`. If present → **local mode** (skip vibe-kanban entirely, see "Local mode" section below). Otherwise → **kanban mode** as documented here.
+
 For each issue (in dependency order, parents first):
 
 ```
@@ -191,6 +193,65 @@ Next: /vibe-flow:vibe-ship to dispatch them.
 ```
 
 Optionally write a plan summary markdown to `.vibe-flow/plans/<YYYY-MM-DD-slug>.md` for audit.
+
+## Local mode (`--local`)
+
+Triggered when `$ARGUMENTS` contains `--local`. The plan is identical up through Step 6 (decompose, tier, DAG, coalesce, approval). Step 7+ change:
+
+**Step 7 (local):** Skip `create_issue` / `create_issue_relationship` / tag MCP calls. Instead, write the full plan to `.vibe-flow/plan-local.json`:
+
+```json
+{
+  "spec_title": "<from user>",
+  "created_at": "<ISO-8601 UTC>",
+  "project_id": null,
+  "source": "vibe-plan",
+  "mode": "local",
+  "issues": [
+    {
+      "id": "L1",
+      "title": "<title>",
+      "description": "<full markdown body matching Output format>",
+      "tier": "T2",
+      "depends_on": [],
+      "tags": ["epic"],
+      "brainstorm": null,
+      "files_hint": ["path/a.ts", "path/b.ts"],
+      "kanban_id": null,
+      "simple_id": null
+    },
+    {
+      "id": "L2",
+      "title": "...",
+      "tier": "T1",
+      "depends_on": ["L1"],
+      "...": "..."
+    }
+  ],
+  "waves": [["L1"], ["L2", "L3"], ["L4"]]
+}
+```
+
+Rules:
+- IDs are sequential `L1`, `L2`, ... assigned in dependency-order (parents first), matching the order you'd create them in kanban mode.
+- `waves` is the precomputed topological layering (same algorithm as `references/wave-scheduler.md`), embedded so `vibe-ship-fast` doesn't recompute.
+- `depends_on` uses local `L<n>` IDs only.
+- `kanban_id` / `simple_id` are `null` when `source: "vibe-plan"`. They are populated only by `vibe-import-kanban` so `vibe-export-kanban` can post the merge comment back on the right issue.
+- `source` is `"vibe-plan"` (this skill), `"vibe-import-kanban"` (imported from kanban), or `"manual"`.
+- Pretty-print with 2-space indent. Overwrite if exists (after asking user if a previous run will be clobbered).
+
+**Step 8 (local):** Output summary:
+
+```
+Local plan written:
+  File: .vibe-flow/plan-local.json
+  Issues: <N>
+  Waves: <M>
+
+Next: /vibe-flow:vibe-ship-fast to dispatch.
+```
+
+Local mode never creates GitHub issues, vibe-kanban issues, or branches. It only writes the JSON.
 
 ## Brainstorm coordinator mode (called recursively)
 
