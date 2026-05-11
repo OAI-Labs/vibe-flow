@@ -5,6 +5,28 @@ and [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.7] — 2026-05-11
+
+### Added
+- **`plugins/vibe-flow/skills/vibe-ship/scripts/vibe-dispatch.sh`** — bash helper that POSTs a
+  `start_workspace` request directly to the vibe-kanban HTTP backend
+  (`${VIBE_BACKEND_URL}/api/workspaces/start`). The script fetches the issue
+  description over HTTP, renders the opening + closing protocol template
+  (`skills/vibe-ship/scripts/templates/dispatch-prompt.tmpl`) with `BRANCH_NAME`, `ISSUE_SIMPLE_ID`,
+  and `ISSUE_TITLE` substituted, and prints `{workspace_id, execution_id, branch}` as
+  JSON. Requires `curl` and `jq`. Optional `VIBE_API_PREFIX` env var (defaults `/api`)
+  for builds that mount under `/v1`.
+
+### Changed
+- **`vibe-ship` Step 4b — dispatch via `vibe-dispatch.sh` instead of emitting the
+  full prompt body as a tool argument.** Previously the orchestrating LLM had to
+  generate the entire prompt (opening protocol + issue description + closing
+  protocol) on every dispatch, costing thousands of output tokens per issue. The
+  script builds the prompt locally and the LLM only emits the ~30-token command
+  line. MCP `start_workspace` is kept as a fallback when the script fails or
+  `VIBE_BACKEND_URL` is unset. The opening protocol still ships in the rendered
+  prompt, so the stale-workspace freshness guarantee is preserved.
+
 ## [0.2.6] — 2026-05-11
 
 ### Changed

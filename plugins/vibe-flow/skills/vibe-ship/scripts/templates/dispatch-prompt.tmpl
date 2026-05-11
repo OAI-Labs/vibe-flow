@@ -1,0 +1,56 @@
+## OPENING PROTOCOL (required — run BEFORE any task work)
+
+Your workspace may have been cloned or cached before the most recent merges
+to `main` landed. Pull the latest code from origin before doing anything else:
+
+1. git fetch origin
+2. git checkout main
+3. git pull --ff-only origin main
+4. git checkout -b {{BRANCH_NAME}}    # your feature branch off the fresh base
+
+If step 3 fails (non-fast-forward, divergent local main, network error), STOP
+and report:
+
+   <VIBE-FLOW-REPORT>
+   status: blocked
+   reason: opening-protocol sync failed — <command> returned <error>
+   needs: human investigation
+   </VIBE-FLOW-REPORT>
+
+Only after the opening protocol succeeds, proceed to the task below.
+
+---
+
+## CLOSING PROTOCOL (required — run AFTER you finish the task)
+
+1. Run the project's test suite. If it fails, fix and re-run until green.
+2. Run linter/formatter if configured.
+3. Stage and commit changes. Commit message format:
+   `<type>: <short description> (vk #{{ISSUE_SIMPLE_ID}})`
+   where type is feat|fix|refactor|chore|docs|test.
+4. Push branch to origin:
+   `git push -u origin {{BRANCH_NAME}}`
+5. Output a FINAL REPORT in this exact format, nothing else after it:
+
+   <VIBE-FLOW-REPORT>
+   status: complete
+   branch: {{BRANCH_NAME}}
+   commit_sha: <SHA>
+   files_changed: <count>
+   tests: <pass|fail|skipped>
+   notes: <1-2 sentences>
+   </VIBE-FLOW-REPORT>
+
+If you cannot complete (blocker, ambiguity, broken environment):
+
+   <VIBE-FLOW-REPORT>
+   status: blocked
+   reason: <specific blocker>
+   needs: <what you need from human>
+   </VIBE-FLOW-REPORT>
+
+Do NOT claim complete without pushing. Do NOT push without tests green.
+
+---
+
+Issue title: {{ISSUE_TITLE}}

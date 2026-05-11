@@ -93,20 +93,36 @@ Persist `BASE_SHA` to `state.json` as `waves[L].base_sha` — **audit only**. Th
 **4b. For each issue in wave (parallel):**
 1. Compute tier via `executor-routing.md`
 2. Honor `max_opus_per_wave` — downgrade lowest-criticality opus issues to sonnet-high
-3. Build prompt: opening-protocol template (see `references/prompt-templates.md` §0) + `{issue_description}` + closing-protocol template. The opening protocol is what actually defeats stale-workspace bugs.
-4. Call MCP `start_workspace`:
-   ```
-   executor = tier.executor
-   variant = tier.variant
-   name = "<simple-id> <slug>"
-   repositories = [{repo_id, branch: "main"}]
-   issue_id = issue.id
-   prompt = built_prompt
-   ```
-5. Read actual feature branch from workspace response → record in state.json with workspace_id
-6. Record in state.json: `status: dispatched`
+3. Dispatch via the `vibe-dispatch.sh` helper script — do NOT build the prompt inline as
+   a tool argument. The script reads the prompt template (opening + closing protocol)
+   from `plugins/vibe-flow/skills/vibe-ship/scripts/templates/dispatch-prompt.tmpl`, fetches the issue
+   description directly from the vibe-kanban HTTP API, and POSTs to
+   `${VIBE_BACKEND_URL}/api/workspaces/start`. Calling the script keeps the LLM-emitted
+   token count per dispatch to ~30 tokens (the command line) instead of thousands (the
+   full prompt body). The opening protocol still ships in the prompt, so the
+   stale-workspace fix is preserved.
 
-**Dispatch in parallel** — issue calls in a single message with multiple tool invocations.
+   ```bash
+   plugins/vibe-flow/skills/vibe-ship/scripts/vibe-dispatch.sh \
+     "<issue_id>" "<repo_id>" "<executor>" "<variant>" "<branch_name>"
+   ```
+
+   Required env: `VIBE_BACKEND_URL` (same value the MCP server uses). Optional:
+   `VIBE_API_PREFIX` (defaults to `/api`; set to `/v1` if your build mounts there).
+
+   Script stdout is JSON:
+   ```
+   { "workspace_id": "...", "execution_id": "...", "branch": "..." }
+   ```
+
+4. Read the workspace_id + branch from the script's JSON output → record in state.json.
+5. Record in state.json: `status: dispatched`.
+
+**Fallback to MCP `start_workspace`** only if the script fails (non-zero exit) or
+`VIBE_BACKEND_URL` is unset. In that case build the prompt inline as before — keep
+the opening + closing protocol templates.
+
+**Dispatch in parallel** — issue calls in a single message with multiple Bash tool invocations.
 
 **4c. Wait for wave barrier**
 
