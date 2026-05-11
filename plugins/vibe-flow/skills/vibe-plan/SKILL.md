@@ -40,7 +40,12 @@ Ask user if unclear:
 - Which repo(s) does this touch?
 - Which vibe-kanban project to put issues in?
 
-If spec is < 300 chars and trivial → short-circuit, just `create_issue` directly without full planning.
+**Single-issue short-circuit.** Skip full planning and just `create_issue` directly if ANY of these apply:
+- Fewer than 2 distinct acceptance criteria can be stated
+- Estimated total change ≤ 30 LOC
+- Touches only 1 file and no cross-file dependencies are stated
+
+Char count alone is a weak proxy — prefer the criteria above. The goal is to avoid orchestration overhead (workspace setup + review + CI) exceeding the work itself.
 
 ### Step 2: Decompose into atomic tasks
 
@@ -89,6 +94,23 @@ Build the dependency graph. Validate:
 If spec produces a chain with > 6 levels or > 50 total issues:
 - Flag to user: "This spec is large. Consider breaking into sub-specs."
 - Offer to split into phases (each phase = its own vibe-plan run)
+
+### Step 4.5: Coalesce micro-tasks
+
+After the DAG is valid, look for over-decomposition. Merge two issues A → B into one if ALL of:
+- Both are tier ≤ T1
+- B's only parent is A (linear chain, no fan-in from elsewhere)
+- B has no other children blocking distinct work
+- Same file scope (overlapping or contained file set)
+
+Repeat until no more pairs match.
+
+Also compute the median estimated LOC across leaf issues. If `median < 20`, flag the plan: likely over-decomposition. Offer the user a choice:
+- Coalesce more aggressively (relax the rules above to tier ≤ T2)
+- Re-decompose at a higher level
+- Keep as-is (user accepts the overhead)
+
+Rationale: orchestration cost per issue (workspace + review + CI) is roughly fixed. Issues smaller than that cost are net-negative compared to bundling.
 
 ### Step 5: Ambiguity check — T4 detection
 
